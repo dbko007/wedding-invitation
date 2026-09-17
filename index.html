@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>모바일 청첩장</title>
+<!-- ============================================================
+  📌 수정 가이드 : 아래 CONFIG 값만 바꾸면 됩니다.
+  - 사진은 같은 폴더에 photo-main.jpg, photo-1.jpg ... 로 두거나
+  CONFIG의 photo 값 경로를 바꾸세요.
+  - 지도는 venue.name / venue.address 를 바꾸면 자동 연결됩니다.
+============================================================ -->
+<style>
+  :root {
+    --bg:        #0c0c0e;
+    --bg-soft:   #141417;
+    --gold:      #c8a96a;
+    --gold-soft: #e3cb96;
+    --line:      #2a2a2f;
+    --text:      #ece7dd;
+    --muted:     #9a958c;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+  html { background: var(--bg); }
+  body {
+    font-family: 'Helvetica Neue','Apple SD Gothic Neo','Noto Sans KR',sans-serif;
+    color: var(--text); background: var(--bg);
+    max-width: 480px; margin:0 auto; min-height:100vh;
+    line-height: 1.7; overflow-x:hidden;
+  }
+  .serif { font-family: 'Playfair Display','Times New Roman', serif; }
+  a { color:inherit; text-decoration:none; }
+
+  /* ---------- HERO ---------- */
+  .hero { position:relative; min-height: 86vh; display:flex; align-items:center; justify-content:center; }
+  .hero-photo {
+    position:absolute; inset:0;
+    background: var(--photo, url('photo-main.jpg')) center/cover no-repeat #1a1a1a;
+    opacity:.42; filter: grayscale(20%) brightness(.7);
+  }
+  .hero::after { content:""; position:absolute; inset:0; background:linear-gradient(180deg, rgba(12,12,14,.35), rgba(12,12,14,.85)); }
+  .hero-inner { position:relative; z-index:2; text-align:center; padding:0 28px; }
+  .hero-eyebrow {
+    font-size:11px; letter-spacing:.45em; color:var(--gold);
+    text-transform:uppercase; margin-bottom:26px;
+  }
+  .hero-eyebrow::before, .hero-eyebrow::after { content:""; display:inline-block; width:22px; height:1px; background:var(--gold); vertical-align:middle; margin:0 12px; opacity:.6; }
+  .hero-names { font-size:42px; letter-spacing:.04em; font-weight:400; line-height:1.25; }
+  .hero-names .amp { display:block; font-style:italic; color:var(--gold-soft); font-size:26px; margin:6px 0; }
+  .hero-date { margin-top:30px; font-size:15px; letter-spacing:.18em; color:var(--muted); }
+  .hero-date .sep { color:var(--gold); margin:0 8px; }
+  .hero-loc { margin-top:8px; font-size:13px; letter-spacing:.05em; color:var(--muted); }
+  .scroll-hint { position:absolute; bottom:26px; left:50%; transform:translateX(-50%); z-index:2; font-size:10px; letter-spacing:.3em; color:var(--muted); }
+  .scroll-hint::after { content:""; display:block; width:1px; height:30px; background:var(--gold); margin:10px auto 0; animation:drop 1.8s infinite ease-in-out; }
+  @keyframes drop { 0%,100%{opacity:.2; transform:scaleY(.3)} 50%{opacity:1; transform:scaleY(1)} }
+
+  /* ---------- sections ---------- */
+  section { padding:72px 28px; border-bottom:1px solid var(--line); }
+  .label { text-align:center; font-size:11px; letter-spacing:.4em; color:var(--gold); text-transform:uppercase; margin-bottom:8px; }
+  .label::before, .label::after { content:""; display:inline-block; width:18px; height:1px; background:var(--gold); vertical-align:middle; margin:0 10px; opacity:.5; }
+  .title { text-align:center; font-size:24px; font-weight:400; letter-spacing:.05em; margin-bottom:34px; }
+
+  /* greeting */
+  .greeting { text-align:center; font-size:15px; color:var(--muted); white-space:pre-line; }
+
+  /* families */
+  .families { display:flex; flex-direction:column; gap:34px; margin-top:8px; }
+  .family { text-align:center; }
+  .family .role { font-size:12px; letter-spacing:.2em; color:var(--gold); margin-bottom:14px; }
+  .family .person { font-size:16px; margin:2px 0; }
+  .family .person b { font-weight:400; }
+  .family .relation { font-size:16px; color:var(--text); margin-left:6px; }
+
+  /* countdown */
+  .countdown { display:flex; justify-content:center; gap:10px; }
+  .cd-box { text-align:center; min-width:64px; padding:18px 8px 12px; border:1px solid var(--line); background:var(--bg-soft); }
+  .cd-num { font-size:30px; font-weight:300; color:var(--gold-soft); font-variant-numeric:tabular-nums; }
+  .cd-unit { font-size:10px; letter-spacing:.2em; color:var(--muted); margin-top:6px; }
+
+  /* info cards */
+  .info-row { display:flex; gap:14px; align-items:baseline; padding:14px 0; border-bottom:1px solid var(--line); }
+  .info-row:last-child { border-bottom:0; }
+  .info-row .k { flex:0 0 72px; font-size:12px; letter-spacing:.1em; color:var(--gold); }
+  .info-row .v { flex:1; font-size:14px; color:var(--text); }
+
+  /* map */
+  #map { width:100%; height:260px; margin-top:20px; border:1px solid var(--line); }
+  .map-btns { display:flex; gap:8px; margin-top:12px; }
+  .btn { flex:1; text-align:center; padding:13px 10px; font-size:13px; letter-spacing:.05em; border:1px solid var(--gold); color:var(--gold); transition:.2s; }
+  .btn:active { background:var(--gold); color:var(--bg); }
+  .btn.fill { background:var(--gold); color:var(--bg); }
+
+  /* gallery */
+  .gallery { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .gallery img { width:100%; height:140px; object-fit:cover; display:block; filter:grayscale(10%); }
+  .gallery .g-main { grid-column:span 2; height:220px; }
+  .ph { width:100%; height:100%; background:linear-gradient(135deg,#1d1d20,#262629); display:flex;align-items:center;justify-content:center; color:var(--muted); font-size:11px; letter-spacing:.15em; }
+
+  /* contacts */
+  .contact-grid { display:flex; flex-direction:column; gap:10px; }
+  .contact { display:flex; align-items:center; gap:10px; padding:14px; border:1px solid var(--line); background:var(--bg-soft); }
+  .contact .who { flex:1; font-size:14px; }
+  .contact .who span { font-size:11px; color:var(--muted); margin-left:4px; }
+  .contact a { font-size:12px; padding:7px 12px; border:1px solid var(--gold); color:var(--gold); }
+
+  /* account */
+  .acc { margin-top:10px; padding:16px; border:1px solid var(--line); background:var(--bg-soft); }
+  .acc .h { font-size:12px; color:var(--gold); letter-spacing:.1em; margin-bottom:10px; }
+  .acc .row { font-size:13px; display:flex; justify-content:space-between; padding:5px 0; }
+  .acc .copy { font-size:11px; color:var(--gold); cursor:pointer; border-bottom:1px dotted var(--gold); }
+
+  /* calendar */
+  .cal-btns { display:flex; gap:8px; }
+  .cal-btns .btn { flex:1; padding:11px 6px; font-size:12px; border-color:var(--gold); color:var(--gold); }
+
+  footer { text-align:center; padding:48px 28px 64px; font-size:11px; letter-spacing:.2em; color:var(--muted); }
+
+  /* fade-in on scroll */
+  .reveal { opacity:0; transform:translateY(24px); transition:opacity .9s ease, transform .9s ease; }
+  .reveal.on { opacity:1; transform:none; }
+</style>
+</head>
+<body>
+
+<!-- ===================== HERO ===================== -->
+<header class="hero" id="hero">
+  <div class="hero-photo"></div>
+  <div class="hero-inner">
+    <div class="hero-eyebrow">The Wedding of</div>
+    <div class="hero-names serif">
+      Dongbin<span class="amp">&amp;</span>Hyerin
+    </div>
+    <div class="hero-date" id="heroDate">2025<span class="sep">·</span>10<span class="sep">·</span>18 SAT</div>
+    <div class="hero-loc" id="heroLoc">Seoul, Grand Ballroom</div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</header>
+
+<!-- ===================== 인사말 ===================== -->
+<section class="reveal">
+  <div class="label">Invitation</div>
+  <div class="title serif">초대합니다</div>
+  <p class="greeting" id="greetingText">두 사람이 하나가 되는 날,
+가장 먼저 축하해 주는 여러분을
+정성껏 초대합니다.</p>
+</section>
+
+<!-- ===================== 혼주/소개 ===================== -->
+<section class="reveal">
+  <div class="label">Family</div>
+  <div class="title serif">혼주 · 소개</div>
+  <div class="families" id="families">
+    <!-- 신랑측 -->
+    <div class="family">
+      <div class="role">신랑 측</div>
+      <div class="person"><b>아버지</b> 고광훈 <span class="relation">/ 어머니 김명옥</span></div>
+      <div class="person"><b>신랑</b> 고동빈</div>
+    </div>
+    <!-- 신부측 -->
+    <div class="family">
+      <div class="role">신부 측</div>
+      <div class="person"><b>아버지</b> 김영문 <span class="relation">/ 어머니 정은옥</span></div>
+      <div class="person"><b>신부</b> 김수영</div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== D-day 카운트다운 ===================== -->
+<section class="reveal">
+  <div class="label">Countdown</div>
+  <div class="title serif">D-day</div>
+  <div class="countdown" id="countdown">
+    <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-unit">DAYS</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-unit">HOURS</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-unit">MIN</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-unit">SEC</div></div>
+  </div>
+</section>
+
+<!-- ===================== 예식 정보 ===================== -->
+<section class="reveal">
+  <div class="label">Information</div>
+  <div class="title serif">예식 안내</div>
+  <div class="info-row"><div class="k">일시</div><div class="v" id="info-date">2025년 10월 18일 토요일 오후 2시</div></div>
+  <div class="info-row"><div class="k">장소</div><div class="v" id="info-venue">○○호텔 그랜드볼룸</div></div>
+  <div class="info-row"><div class="k">주소</div><div class="v" id="info-addr">서울특별시 강남구 테헤란로 ○○○</div></div>
+  <div class="info-row"><div class="k">교통</div><div class="v" id="info-traffic">지하철 2호선 ○○역 ○번 출구 도보 5분 / 주차 2시간 무료</div></div>
+</section>
+
+<!-- ===================== 지도 ===================== -->
+<section class="reveal">
+  <div class="label">Location</div>
+  <div class="title serif">오시는 길</div>
+  <div id="map"></div>
+  <div class="map-btns">
+    <a class="btn fill" id="mapNaver" target="_blank">네이버 지도</a>
+    <a class="btn" id="mapKakao" target="_blank">카카오 지도</a>
+    <a class="btn" id="mapTmap" target="_blank">길찾기</a>
+  </div>
+</section>
+
+<!-- ===================== 갤러리 ===================== -->
+<section class="reveal">
+  <div class="label">Gallery</div>
+  <div class="title serif">우리의 순간</div>
+  <div class="gallery" id="gallery">
+    <div class="g-main"><img src="photo-1.jpg" alt=""></div>
+    <img src="photo-2.jpg" alt="">
+    <img src="photo-3.jpg" alt="">
+    <img src="photo-4.jpg" alt="">
+    <img src="photo-5.jpg" alt="">
+    <img src="photo-6.jpg" alt="">
+    <img src="photo-7.jpg" alt="">
+    <img src="photo-8.jpg" alt="">
+  </div>
+</section>
+
+<!-- ===================== 캘린더 추가 ===================== -->
+<section class="reveal">
+  <div class="label">Calendar</div>
+  <div class="title serif">일정 추가</div>
+  <div class="cal-btns">
+    <a class="btn" id="calGoogle">Google 캘린더</a>
+    <a class="btn" id="calApple">Apple 캘린더</a>
+    <a class="btn" id="calIcs">.ics 파일</a>
+  </div>
+</section>
+
+<!-- ===================== 연락처 ===================== -->
+<section class="reveal">
+  <div class="label">Contact</div>
+  <div class="title serif">연락처</div>
+  <div class="contact-grid" id="contacts">
+    <div class="contact"><div class="who">신랑 고동빈 <span>010-8817-2221</span></div><a href="tel:01088172221">전화</a><a href="sms:01088172221">문자</a></div>
+    <div class="contact"><div class="who">신부 김수영 <span>010-9278-3835</span></div><a href="tel:01092783835">전화</a><a href="sms:01092783835">문자</a></div>
+    <div class="contact"><div class="who">신랑 아버지 고광훈 <span>010-8344-1912</span></div><a href="tel:01083441912">전화</a><a href="sms:01083441912">문자</a></div>
+    <div class="contact"><div class="who">신랑 어머니 김명옥 <span>010-7306-1406</span></div><a href="tel:01073061406">전화</a><a href="sms:01073061406">문자</a></div>
+    <div class="contact"><div class="who">신부 아버지 김영문 <span>010-5335-3484</span></div><a href="tel:01053353484">전화</a><a href="sms:01053353484">문자</a></div>
+    <div class="contact"><div class="who">신부 어머니 정은옥 <span>010-2016-3845</span></div><a href="tel:01020163845">전화</a><a href="sms:01020163845">문자</a></div>
+  </div>
+</section>
+
+<!-- ===================== 축의계좌 ===================== -->
+<section class="reveal">
+  <div class="label">Account</div>
+  <div class="title serif">축의계좌 안내</div>
+  <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:18px;">마음 전하시기 불편하신 분들을 위해 안내드립니다.</p>
+  <div class="acc">
+    <div class="h">신랑 고동빈</div>
+    <div class="row"><span>국민은행 466402-01-331358</span><span class="copy" data-acc="466402-01-331358">복사</span></div>
+  </div>
+  <div class="acc">
+    <div class="h">신부 김수영</div>
+    <div class="row"><span>우리은행 1002-1415-36132</span><span class="copy" data-acc="1002-1415-36132">복사</span></div>
+  </div>
+</section>
+
+<footer>WEDDING INVITATION · MADE WITH ♥</footer>
+
+<!-- ============================================================
+  ⚙️ 설정 : 실제 정보로 바꾸세요. (ISO 날짜/시간 주의)
+============================================================ -->
+<script>
+const CONFIG = {
+  groom: "고동빈",
+  bride: "김수영",
+  groomEn: "Ko Dong Been",
+  brideEn: "Kim Soo Young",
+  // 예식 시작 시각 (한국시간). 24시간제. 연-월-일 시:분
+  datetime: "2027-01-31T11:00:00",
+  venueName: "서초 더화이트베일 3F V홀",
+  venueAddress: "서울특별시 서초구 서초대로77길 41",
+  traffic: "지도/길찾기 버튼으로 확인해 주세요.",
+  greeting: "두 사람이 하나가 되는 날,\n가장 먼저 축하해 주는 여러분을\n정성껏 초대합니다."
+};
+</script>
+<script>
+/* ---------- 적용 ---------- */
+const WEEK = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+const WEEK_KO = ['일','월','화','수','목','금','토'];
+const ev = new Date(CONFIG.datetime);
+const pad = n => String(n).padStart(2,'0');
+
+// 히어로
+document.querySelector('.hero-names').innerHTML =
+  `${CONFIG.groomEn}<span class="amp">&amp;</span>${CONFIG.brideEn}`;
+document.getElementById('heroDate').innerHTML =
+  `${ev.getFullYear()}<span class="sep">·</span>${pad(ev.getMonth()+1)}<span class="sep">·</span>${pad(ev.getDate())} ${WEEK[ev.getDay()]}`;
+document.getElementById('heroLoc').textContent = CONFIG.venueName;
+document.getElementById('greetingText').textContent = CONFIG.greeting;
+
+// 예식 정보
+const h = ev.getHours(), m = ev.getMinutes();
+const ampm = h<12?'오전':'오후'; const h12 = h%12===0?12:h%12;
+document.getElementById('info-date').textContent =
+  `${ev.getFullYear()}년 ${ev.getMonth()+1}월 ${ev.getDate()}일 ${WEEK_KO[ev.getDay()]}요일 ${ampm} ${h12}시${m? ' '+m+'분':''}`;
+document.getElementById('info-venue').textContent = CONFIG.venueName;
+document.getElementById('info-addr').textContent = CONFIG.venueAddress;
+document.getElementById('info-traffic').textContent = CONFIG.traffic;
+
+/* ---------- 카운트다운 ---------- */
+const cdD=document.getElementById('cd-d'),cdH=document.getElementById('cd-h'),
+      cdM=document.getElementById('cd-m'),cdS=document.getElementById('cd-s');
+function tick(){
+  const now=new Date(), diff=ev-now;
+  if(diff<=0){ cdD.textContent=cdH.textContent=cdM.textContent=cdS.textContent='00'; return; }
+  const d=Math.floor(diff/864e5), h=Math.floor(diff%864e5/36e5),
+        m=Math.floor(diff%36e5/6e4), s=Math.floor(diff%6e4/1e3);
+  cdD.textContent=pad(d); cdH.textContent=pad(h); cdM.textContent=pad(m); cdS.textContent=pad(s);
+}
+tick(); setInterval(tick,1000);
+
+/* ---------- 지도 링크 ---------- */
+const addrEnc=encodeURIComponent(CONFIG.venueAddress);
+const nameEnc=encodeURIComponent(CONFIG.venueName);
+document.getElementById('mapNaver').href=`https://map.naver.com/v5/search/${addrEnc}`;
+document.getElementById('mapKakao').href=`https://map.kakao.com/?q=${addrEnc}`;
+document.getElementById('mapTmap').href=`https://www.tmap.co.kr/tmap/?name=${nameEnc}&addr=${addrEnc}`;
+
+/* ---------- 지도 미리보기(정적) ---------- */
+// 주소 좌표 없이도 장소명+주소로 보여주는 정적 지도를 카카오 스타일 플레이스홀더로 표시
+const mapEl=document.getElementById('map');
+mapEl.style.background="#16161a";
+mapEl.style.display="flex"; mapEl.style.alignItems="center"; mapEl.style.justifyContent="center";
+mapEl.style.flexDirection="column"; mapEl.style.color="var(--muted)";
+mapEl.innerHTML=`<div style="font-size:12px;letter-spacing:.1em;color:var(--gold);margin-bottom:6px;">${CONFIG.venueName}</div><div style="font-size:11px;">${CONFIG.venueAddress}</div>`;
+
+/* ---------- 캘린더 ---------- */
+const fmtUTC=d=>`${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
+const end=new Date(ev.getTime()+2*36e5); // 2시간
+const gStart=fmtUTC(ev), gEnd=fmtUTC(end);
+const gTitle=encodeURIComponent(`${CONFIG.groom} ♥ ${CONFIG.bride} 결혼식`);
+const gLoc=encodeURIComponent(CONFIG.venueName);
+const gDet=encodeURIComponent(`예식일시: ${ev.toLocaleString('ko-KR')}\n장소: ${CONFIG.venueName}\n주소: ${CONFIG.venueAddress}`);
+document.getElementById('calGoogle').href=
+  `https://www.google.com/calendar/render?action=TEMPLATE&text=${gTitle}&dates=${gStart}/${gEnd}&location=${gLoc}&details=${gDet}`;
+
+// .ics / Apple
+function buildICS(){
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//wedding//invitation//','BEGIN:VEVENT',
+    `UID:${Date.now()}@wedding`,`DTSTAMP:${gStart}`,
+    `DTSTART:${gStart}`,`DTEND:${gEnd}`,
+    `SUMMARY:${CONFIG.groom} ♥ ${CONFIG.bride} 결혼식`,
+    `LOCATION:${CONFIG.venueName}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
+}
+const icsBlob=new Blob([buildICS()],{type:'text/calendar'});
+const icsUrl=URL.createObjectURL(icsBlob);
+const icsLink=document.getElementById('calIcs'); icsLink.href=icsUrl; icsLink.download='wedding.ics';
+// Apple은 webcal 스키마로 .ics를 바로 캘린더 앱에 등록
+document.getElementById('calApple').href='webcal:'+icsUrl.replace(/^https?:/,'').replace(/^\/\//,'//');
+// (로컬 파일은 webcal 미지원 가능 → 클릭 시 안내)
+document.getElementById('calApple').addEventListener('click',e=>{
+  alert('로컬에서는 자동 등록이 제한될 수 있어요. "↓ .ics 파일"을 다운로드해 열어주세요.');
+});
+
+/* ---------- 계좌 복사 ---------- */
+document.querySelectorAll('.copy').forEach(el=>{
+  el.addEventListener('click',()=>{
+    navigator.clipboard.writeText(el.dataset.acc).then(()=>{el.textContent='복사됨';setTimeout(()=>el.textContent='복사',1500);});
+  });
+});
+
+/* ---------- 스크롤 리빌 ---------- */
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');}),{threshold:.15});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
