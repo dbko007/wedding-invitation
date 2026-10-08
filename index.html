@@ -96,34 +96,6 @@
   .gallery .g-main { grid-column:span 2; height:220px; }
   .ph { width:100%; height:100%; background:linear-gradient(135deg,#1d1d20,#262629); display:flex;align-items:center;justify-content:center; color:var(--muted); font-size:11px; letter-spacing:.15em; }
 
-  /* lightbox (사진 크게 보기) */
-  .lightbox {
-    position:fixed; inset:0; z-index:999;
-    background:rgba(0,0,0,.94);
-    display:none; align-items:center; justify-content:center;
-    cursor:zoom-out;
-  }
-  .lightbox.on { display:flex; }
-  .lightbox img {
-    max-width:100%; max-height:100%;
-    object-fit:contain;
-    animation:zoomIn .25s ease;
-  }
-  @keyframes zoomIn { from{opacity:0; transform:scale(.92)} to{opacity:1; transform:scale(1)} }
-  .gallery img { cursor:zoom-in; }
-
-  /* BGM 버튼 */
-  #bgmBtn {
-    position:fixed; top:18px; right:16px; z-index:900;
-    width:44px; height:44px; border-radius:50%;
-    border:1px solid var(--gold); background:rgba(12,12,14,.72);
-    color:var(--gold); font-size:16px; line-height:1;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; backdrop-filter:blur(4px);
-  }
-  #bgmBtn.playing { animation:pulse 1.6s infinite ease-in-out; }
-  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(200,169,106,.35)} 50%{box-shadow:0 0 0 8px rgba(169,106,0,.0)} }
-
   /* contacts */
   .contact-grid { display:flex; flex-direction:column; gap:10px; }
   .contact { display:flex; align-items:center; gap:10px; padding:14px; border:1px solid var(--line); background:var(--bg-soft); }
@@ -193,25 +165,6 @@
   </div>
 </section>
 
-<!-- ===================== 갤러리 ===================== -->
-<section class="reveal">
-  <div class="label">Gallery</div>
-  <div class="title serif">우리의 순간</div>
-  <div class="gallery" id="gallery">
-    <div class="g-main"><img src="photo-1.jpg" data-full="photo-1-full.jpg" alt=""></div>
-    <img src="photo-2.jpg" data-full="photo-2-full.jpg" alt="">
-    <img src="photo-3.jpg" data-full="photo-3-full.jpg" alt="">
-    <img src="photo-4.jpg" data-full="photo-4-full.jpg" alt="">
-    <img src="photo-5.jpg" data-full="photo-5-full.jpg" alt="">
-    <img src="photo-6.jpg" data-full="photo-6-full.jpg" alt="">
-    <img src="photo-7.jpg" data-full="photo-7-full.jpg" alt="">
-    <img src="photo-8.jpg" data-full="photo-8-full.jpg" alt="">
-    <img src="photo-9.jpg" data-full="photo-9-full.jpg" alt="">
-    <img src="photo-10.jpg" data-full="photo-10-full.jpg" alt="">
-    <img src="photo-11.jpg" data-full="photo-11-full.jpg" alt="">
-  </div>
-</section>
-
 <!-- ===================== D-day 카운트다운 ===================== -->
 <section class="reveal">
   <div class="label">Countdown</div>
@@ -243,6 +196,22 @@
     <a class="btn fill" id="mapNaver" target="_blank">네이버 지도</a>
     <a class="btn" id="mapKakao" target="_blank">카카오 지도</a>
     <a class="btn" id="mapTmap" target="_blank">길찾기</a>
+  </div>
+</section>
+
+<!-- ===================== 갤러리 ===================== -->
+<section class="reveal">
+  <div class="label">Gallery</div>
+  <div class="title serif">우리의 순간</div>
+  <div class="gallery" id="gallery">
+    <div class="g-main"><img src="photo-1.jpg" alt=""></div>
+    <img src="photo-2.jpg" alt="">
+    <img src="photo-3.jpg" alt="">
+    <img src="photo-4.jpg" alt="">
+    <img src="photo-5.jpg" alt="">
+    <img src="photo-6.jpg" alt="">
+    <img src="photo-7.jpg" alt="">
+    <img src="photo-8.jpg" alt="">
   </div>
 </section>
 
@@ -287,12 +256,6 @@
 </section>
 
 <footer>WEDDING INVITATION · MADE WITH ♥</footer>
-
-<!-- 사진 크게 보기 (라이트박스) -->
-<div class="lightbox" id="lightbox"><img src="" alt=""></div>
-
-<!-- BGM 재생 버튼 -->
-<button id="bgmBtn" aria-label="배경음악 켜기/끄기">♪</button>
 
 <!-- ============================================================
   ⚙️ 설정 : 실제 정보로 바꾸세요. (ISO 날짜/시간 주의)
@@ -400,35 +363,6 @@ document.querySelectorAll('.copy').forEach(el=>{
 /* ---------- 스크롤 리빌 ---------- */
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('on');}),{threshold:.15});
 document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
-
-/* ---------- 사진 크게 보기 (라이트박스 - 원본 화질) ---------- */
-const lightbox=document.getElementById('lightbox');
-const lightboxImg=lightbox.querySelector('img');
-document.querySelectorAll('#gallery img').forEach(img=>{
-  img.addEventListener('click',()=>{
-    lightboxImg.src=img.dataset.full||img.src;
-    lightbox.classList.add('on');
-  });
-});
-lightbox.addEventListener('click',()=>lightbox.classList.remove('on'));
-
-/* ---------- BGM ---------- */
-const bgm=new Audio('bgm.wav');
-bgm.loop=true; bgm.volume=0.45;
-const bgmBtn=document.getElementById('bgmBtn');
-bgmBtn.addEventListener('click',()=>{
-  if(bgm.paused){ bgm.play().catch(()=>{}); } else { bgm.pause(); }
-});
-bgm.addEventListener('play',()=>{ bgmBtn.textContent='❚❚'; bgmBtn.classList.add('playing'); });
-bgm.addEventListener('pause',()=>{ bgmBtn.textContent='♪'; bgmBtn.classList.remove('playing'); });
-// 모바일 자동재생 정책: 첫 터치 시 재생 시작
-document.body.addEventListener('touchstart', function once(){
-  bgm.play().catch(()=>{});
-},{once:true});
-// 데스크톱: 첫 클릭에도 재생
-document.body.addEventListener('click', function once2(){
-  if(bgm.paused){ bgm.play().catch(()=>{}); }
-},{once:true});
 </script>
 </body>
 </html>
