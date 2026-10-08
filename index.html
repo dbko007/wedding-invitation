@@ -112,6 +112,18 @@
   @keyframes zoomIn { from{opacity:0; transform:scale(.92)} to{opacity:1; transform:scale(1)} }
   .gallery img { cursor:zoom-in; }
 
+  /* BGM 버튼 */
+  #bgmBtn {
+    position:fixed; top:18px; right:16px; z-index:900;
+    width:44px; height:44px; border-radius:50%;
+    border:1px solid var(--gold); background:rgba(12,12,14,.72);
+    color:var(--gold); font-size:16px; line-height:1;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; backdrop-filter:blur(4px);
+  }
+  #bgmBtn.playing { animation:pulse 1.6s infinite ease-in-out; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(200,169,106,.35)} 50%{box-shadow:0 0 0 8px rgba(169,106,0,.0)} }
+
   /* contacts */
   .contact-grid { display:flex; flex-direction:column; gap:10px; }
   .contact { display:flex; align-items:center; gap:10px; padding:14px; border:1px solid var(--line); background:var(--bg-soft); }
@@ -181,22 +193,6 @@
   </div>
 </section>
 
-<!-- ===================== 갤러리 ===================== -->
-<section class="reveal">
-  <div class="label">Gallery</div>
-  <div class="title serif">우리의 순간</div>
-  <div class="gallery" id="gallery">
-    <div class="g-main"><img src="photo-1.jpg" alt=""></div>
-    <img src="photo-2.jpg" alt="">
-    <img src="photo-3.jpg" alt="">
-    <img src="photo-4.jpg" alt="">
-    <img src="photo-5.jpg" alt="">
-    <img src="photo-6.jpg" alt="">
-    <img src="photo-7.jpg" alt="">
-    <img src="photo-8.jpg" alt="">
-  </div>
-</section>
-
 <!-- ===================== D-day 카운트다운 ===================== -->
 <section class="reveal">
   <div class="label">Countdown</div>
@@ -231,7 +227,23 @@
   </div>
 </section>
 
-
+<!-- ===================== 갤러리 ===================== -->
+<section class="reveal">
+  <div class="label">Gallery</div>
+  <div class="title serif">우리의 순간</div>
+  <div class="gallery" id="gallery">
+    <div class="g-main"><img src="photo-1.jpg" data-full="photo-1-full.jpg" alt=""></div>
+    <img src="photo-2.jpg" data-full="photo-2-full.jpg" alt="">
+    <img src="photo-3.jpg" data-full="photo-3-full.jpg" alt="">
+    <img src="photo-4.jpg" data-full="photo-4-full.jpg" alt="">
+    <img src="photo-5.jpg" data-full="photo-5-full.jpg" alt="">
+    <img src="photo-6.jpg" data-full="photo-6-full.jpg" alt="">
+    <img src="photo-7.jpg" data-full="photo-7-full.jpg" alt="">
+    <img src="photo-8.jpg" data-full="photo-8-full.jpg" alt="">
+    <img src="photo-9.jpg" data-full="photo-9-full.jpg" alt="">
+    <img src="photo-10.jpg" data-full="photo-10-full.jpg" alt="">
+    <img src="photo-11.jpg" data-full="photo-11-full.jpg" alt="">
+  </section>
 
 <!-- ===================== 캘린더 추가 ===================== -->
 <section class="reveal">
@@ -274,6 +286,9 @@
 </section>
 
 <footer>WEDDING INVITATION · MADE WITH ♥</footer>
+
+<!-- BGM 재생 버튼 -->
+<button id="bgmBtn" aria-label="배경음악 켜기/끄기">♪</button>
 
 <!-- 사진 크게 보기 (라이트박스) -->
 <div class="lightbox" id="lightbox"><img src="" alt=""></div>
@@ -395,6 +410,16 @@ document.querySelectorAll('#gallery img').forEach(img=>{
   });
 });
 lightbox.addEventListener('click',()=>lightbox.classList.remove('on'));
+
+/* ---------- BGM ---------- */
+const bgm=new Audio('bgm.wav');
+bgm.loop=true; bgm.volume=0.45;
+const bgmBtn=document.getElementById('bgmBtn');
+bgmBtn.addEventListener('click',()=>{ if(bgm.paused){bgm.play().catch(()=>{});} else {bgm.pause();} });
+bgm.addEventListener('play',()=>{ bgmBtn.textContent='❚❚'; bgmBtn.classList.add('playing'); });
+bgm.addEventListener('pause',()=>{ bgmBtn.textContent='♪'; bgmBtn.classList.remove('playing'); });
+document.body.addEventListener('touchstart',function once(){ bgm.play().catch(()=>{}); },{once:true});
+document.body.addEventListener('click',function once2(){ if(bgm.paused){ bgm.play().catch(()=>{}); } },{once:true});
 </script>
 </body>
 </html>
