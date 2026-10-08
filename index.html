@@ -387,21 +387,15 @@ const gTitle=encodeURIComponent(`${CONFIG.groom} ♥ ${CONFIG.bride} 결혼식`)
 const gLoc=encodeURIComponent(CONFIG.venueName);
 const gDet=encodeURIComponent(`예식일시: ${ev.toLocaleString('ko-KR')}\n장소: ${CONFIG.venueName}\n주소: ${CONFIG.venueAddress}`);
 
-// .ics 생성 (안드로이드/애플 기본 캘린더 앱 모두 여기로 연결)
-function buildICS(){
-  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//wedding//invitation//','METHOD:PUBLISH','BEGIN:VEVENT',
-    `UID:${Date.now()}@wedding`,`DTSTAMP:${gStart}`,
-    `DTSTART:${gStart}`,`DTEND:${gEnd}`,
-    `SUMMARY:${CONFIG.groom} ♥ ${CONFIG.bride} 결혼식`,
-    `LOCATION:${CONFIG.venueName}`,'END:VEVENT','END:VCALENDAR'].join('\r\n');
-}
-const icsBlob=new Blob([buildICS()],{type:'text/calendar'});
-const icsUrl=URL.createObjectURL(icsBlob);
-// 안드로이드/애플 모두 .ics 파일을 열면 기본 캘린더 앱이 가로채서 등록함
+// 안드로이드: 구글 캘린더 앱이 바로 열리며 일정 추가 확인창 표시 (다운로드 없음)
 const calAndroid=document.getElementById('calAndroid');
-calAndroid.href=icsUrl; calAndroid.download='wedding.ics';
+calAndroid.href=
+  `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${gTitle}&dates=${gStart}/${gEnd}&location=${gLoc}&details=${gDet}`;
+calAndroid.target='_blank';
+
+// 애플: 레포에 올려둔 .ics를 webcal 스킴으로 열면 iOS 캘린더 앱이 바로 확인창 표시 (다운로드 없음)
 const calApple=document.getElementById('calApple');
-calApple.href=icsUrl; calApple.download='wedding.ics';
+calApple.href='webcal://dbko007.github.io/wedding-invitation/wedding.ics';
 
 /* ---------- 계좌 복사 ---------- */
 document.querySelectorAll('.copy').forEach(el=>{
