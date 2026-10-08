@@ -256,7 +256,7 @@
   <div class="map-btns">
     <a class="btn fill" id="mapNaver" target="_blank">네이버 지도</a>
     <a class="btn" id="mapKakao" target="_blank">카카오 지도</a>
-    <a class="btn" id="mapTmap" target="_blank">길찾기</a>
+    <a class="btn" id="mapTmap" target="_blank">T맵 지도</a>
   </div>
 </section>
 
@@ -267,9 +267,8 @@
   <div class="label">Calendar</div>
   <div class="title serif">일정 추가</div>
   <div class="cal-btns">
-    <a class="btn" id="calGoogle">Google 캘린더</a>
+    <a class="btn" id="calAndroid">안드로이드 캘린더</a>
     <a class="btn" id="calApple">Apple 캘린더</a>
-    <a class="btn" id="calIcs">.ics 파일</a>
   </div>
 </section>
 
@@ -390,9 +389,9 @@ const gDet=encodeURIComponent(`예식일시: ${ev.toLocaleString('ko-KR')}\n장�
 document.getElementById('calGoogle').href=
   `https://www.google.com/calendar/render?action=TEMPLATE&text=${gTitle}&dates=${gStart}/${gEnd}&location=${gLoc}&details=${gDet}`;
 
-// .ics / Apple
+// .ics 생성 (안드로이드/애플 기본 캘린더 앱 모두 여기로 연결)
 function buildICS(){
-  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//wedding//invitation//','BEGIN:VEVENT',
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//wedding//invitation//','METHOD:PUBLISH','BEGIN:VEVENT',
     `UID:${Date.now()}@wedding`,`DTSTAMP:${gStart}`,
     `DTSTART:${gStart}`,`DTEND:${gEnd}`,
     `SUMMARY:${CONFIG.groom} ♥ ${CONFIG.bride} 결혼식`,
@@ -400,13 +399,11 @@ function buildICS(){
 }
 const icsBlob=new Blob([buildICS()],{type:'text/calendar'});
 const icsUrl=URL.createObjectURL(icsBlob);
-const icsLink=document.getElementById('calIcs'); icsLink.href=icsUrl; icsLink.download='wedding.ics';
-// Apple은 webcal 스키마로 .ics를 바로 캘린더 앱에 등록
-document.getElementById('calApple').href='webcal:'+icsUrl.replace(/^https?:/,'').replace(/^\/\//,'//');
-// (로컬 파일은 webcal 미지원 가능 → 클릭 시 안내)
-document.getElementById('calApple').addEventListener('click',e=>{
-  alert('로컬에서는 자동 등록이 제한될 수 있어요. "↓ .ics 파일"을 다운로드해 열어주세요.');
-});
+// 안드로이드/애플 모두 .ics 파일을 열면 기본 캘린더 앱이 가로채서 등록함
+const calAndroid=document.getElementById('calAndroid');
+calAndroid.href=icsUrl; calAndroid.download='wedding.ics';
+const calApple=document.getElementById('calApple');
+calApple.href=icsUrl; calApple.download='wedding.ics';
 
 /* ---------- 계좌 복사 ---------- */
 document.querySelectorAll('.copy').forEach(el=>{
