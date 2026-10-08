@@ -386,8 +386,6 @@ const gStart=fmtUTC(ev), gEnd=fmtUTC(end);
 const gTitle=encodeURIComponent(`${CONFIG.groom} ♥ ${CONFIG.bride} 결혼식`);
 const gLoc=encodeURIComponent(CONFIG.venueName);
 const gDet=encodeURIComponent(`예식일시: ${ev.toLocaleString('ko-KR')}\n장소: ${CONFIG.venueName}\n주소: ${CONFIG.venueAddress}`);
-document.getElementById('calGoogle').href=
-  `https://www.google.com/calendar/render?action=TEMPLATE&text=${gTitle}&dates=${gStart}/${gEnd}&location=${gLoc}&details=${gDet}`;
 
 // .ics 생성 (안드로이드/애플 기본 캘린더 앱 모두 여기로 연결)
 function buildICS(){
