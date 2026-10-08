@@ -370,7 +370,7 @@ const nameEnc=encodeURIComponent(CONFIG.venueName);
 document.getElementById('mapNaver').href=`https://map.naver.com/v5/search/${addrEnc}`;
 document.getElementById('mapKakao').href=`https://map.kakao.com/?q=${addrEnc}`;
 // T맵: 앱 스킴으로 열면 티맵 앱이 실행되며 목적지 검색/내비 연결됨 (앱 없으면 웹으로 fallback)
-const tmapUrl=`tmap://search?name=${nameEnc}&addr=${addrEnc}`;
+const tmapUrl=`tmap://search?name=${addrEnc}`;
 document.getElementById('mapTmap').href=tmapUrl;
 
 /* ---------- 지도 미리보기(정적) ---------- */
