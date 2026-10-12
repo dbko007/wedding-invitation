@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="format-detection" content="telephone=no, address=no, email=no, date=no">
 <title>모바일 청첩장</title>
 <!-- ============================================================
   📌 수정 가이드 : 아래 CONFIG 값만 바꾸면 됩니다.
@@ -29,7 +30,8 @@
     line-height: 1.7; overflow-x:hidden;
   }
   .serif { font-family: 'Playfair Display','Times New Roman', serif; }
-  a { color:inherit; text-decoration:none; }
+  a { color:inherit; text-decoration:none; -webkit-text-decoration:none; }
+  a, a * { text-decoration: none !important; }
 
   /* ---------- HERO ---------- */
   .hero { position:relative; min-height: 86vh; display:flex; align-items:center; justify-content:center; }
@@ -222,18 +224,6 @@
     <img src="s6.jpg" alt="">
   </section>
 
-<!-- ===================== D-day 카운트다운 ===================== -->
-<section class="reveal">
-  <div class="label">Countdown</div>
-  <div class="title serif">D-day</div>
-  <div class="countdown" id="countdown">
-    <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-unit">DAYS</div></div>
-    <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-unit">HOURS</div></div>
-    <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-unit">MIN</div></div>
-    <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-unit">SEC</div></div>
-  </div>
-</section>
-
 <!-- ===================== 예식 정보 ===================== -->
 <section class="reveal">
   <div class="label">Information</div>
@@ -253,6 +243,18 @@
     <a class="btn fill" id="mapNaver">네이버 지도</a>
     <a class="btn" id="mapKakao" target="_blank">카카오 지도</a>
     <a class="btn" id="mapTmap">T맵 지도</a>
+  </div>
+</section>
+
+<!-- ===================== D-day 카운트다운 ===================== -->
+<section class="reveal">
+  <div class="label">Countdown</div>
+  <div class="title serif">D-day</div>
+  <div class="countdown" id="countdown">
+    <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-unit">DAYS</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-unit">HOURS</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-unit">MIN</div></div>
+    <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-unit">SEC</div></div>
   </div>
 </section>
 
@@ -323,7 +325,7 @@ const CONFIG = {
   datetime: "2027-01-31T11:00:00",
   venueName: "서초 더화이트베일 3F V홀",
   venueAddress: "서울특별시 서초구 서초중앙로14",
-  traffic: "지하철 - 3호선 남부터미널역 4번 출구 (도보 2분)\n버   스 -\n1) 지선버스(G, 초록색) 4319(사당-남부터미널-잠실)\n2) 간선버스(B, 파랑색) 461(장지동-남부터미널-여의도), 641(문래동-남부터미널-양재동)\n3) 직행·공항버스 5300-1(수원-남부터미널-강남역), 8501(수원대-남부터미널-양재꽃시장)\n자가용 - 맞은편 전용주차타워 이용 (서초동 1426-5번지)",
+  traffic: "○ 자가용 - 맞은편 전용주차타워 이용 (서초동 1426-5번지)\n○ 지하철 - 3호선 남부터미널역 4번 출구 (도보 2분)\n○ 버   스 -\n1) 지선버스(G, 초록색) 4319(사당-남부터미널-잠실)\n2) 간선버스(B, 파랑색) 461(장지동-남부터미널-여의도), 641(문래동-남부터미널-양재동)\n3) 직행·공항버스 5300-1(수원-남부터미널-강남역), 8501(수원대-남부터미널-양재꽃시장)",
   greeting: "두 사람이 하나가 되는 날,\n가장 먼저 축하해 주는 여러분을\n정성껏 초대합니다."
 };
 </script>
