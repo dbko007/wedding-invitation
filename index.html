@@ -94,8 +94,9 @@
 
   /* gallery */
   .gallery { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
-  .gallery img { width:100%; height:140px; object-fit:cover; display:block; filter:grayscale(10%); }
-  .gallery .g-main { grid-column:span 2; height:220px; }
+  .gallery img { width:100%; height:160px; object-fit:cover; object-position:center 25%; display:block; filter:grayscale(10%); }
+  .gallery .g-main { grid-column:span 2; height:260px; }
+  .gallery .g-main img { height:220px; object-position:center 22%; }
   .ph { width:100%; height:100%; background:linear-gradient(135deg,#1d1d20,#262629); display:flex;align-items:center;justify-content:center; color:var(--muted); font-size:11px; letter-spacing:.15em; }
 
   /* lightbox (사진 크게 보기) */
