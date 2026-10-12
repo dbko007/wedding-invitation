@@ -127,18 +127,6 @@
   .lb-next { right:14px; }
   .lb-arrow:active { opacity:.9; }
 
-  /* BGM 버튼 */
-  #bgmBtn {
-    position:fixed; top:18px; right:16px; z-index:900;
-    width:44px; height:44px; border-radius:50%;
-    border:1px solid var(--gold); background:rgba(12,12,14,.72);
-    color:var(--gold); font-size:16px; line-height:1;
-    display:flex; align-items:center; justify-content:center;
-    cursor:pointer; backdrop-filter:blur(4px);
-  }
-  #bgmBtn.playing { animation:pulse 1.6s infinite ease-in-out; }
-  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(200,169,106,.35)} 50%{box-shadow:0 0 0 8px rgba(169,106,0,.0)} }
-
   /* contacts */
   .contact-grid { display:flex; flex-direction:column; gap:10px; }
   .contact { display:flex; align-items:center; gap:10px; padding:14px; border:1px solid var(--line); background:var(--bg-soft); }
@@ -292,15 +280,20 @@
   <div class="acc">
     <div class="h">신랑 고동빈</div>
     <div class="row"><span>국민은행 466402-01-331358</span><span class="copy" data-acc="466402-01-331358">복사</span></div>
+    <div class="h">신랑 측 아버지 고광훈</div>
+    <div class="row"><span>하나은행 394-910033-31707</span><span class="copy" data-acc="394-910033-31707">복사</span></div>
+    <div class="h">신랑 측 어머니 김명옥</div>
+    <div class="row"><span>국민은행 799-21-0049-734</span><span class="copy" data-acc="799-21-0049-734">복사</span></div>
   </div>
   <div class="acc">
     <div class="h">신부 김수영</div>
     <div class="row"><span>우리은행 1002-1415-36132</span><span class="copy" data-acc="1002-1415-36132">복사</span></div>
+    <div class="h">신부 측 아버지 김영문</div>
+    <div class="row"><span>국민은행 247902-04-328934</span><span class="copy" data-acc="247902-04-328934">복사</span></div>
+    <div class="h">신부 측 어머니 정은옥</div>
+    <div class="row"><span>농협은행 207081-56-151849</span><span class="copy" data-acc="207081-56-151849">복사</span></div>
   </div>
 </section>
-
-<!-- BGM 재생 버튼 -->
-<button id="bgmBtn" aria-label="배경음악 켜기/끄기">♪</button>
 
 <!-- 사진 크게 보기 (라이트박스) -->
 <div class="lightbox" id="lightbox"><img src="" alt=""></div>
@@ -453,16 +446,6 @@ lightbox.addEventListener('touchend',e=>{
   if(Math.abs(dx)>50) showLb(lbIdx+(dx<0?1:-1));
   touchX=null;
 },{passive:true});
-
-/* ---------- BGM ---------- */
-const bgm=new Audio('bgm.wav');
-bgm.loop=true; bgm.volume=0.45;
-const bgmBtn=document.getElementById('bgmBtn');
-bgmBtn.addEventListener('click',()=>{ if(bgm.paused){bgm.play().catch(()=>{});} else {bgm.pause();} });
-bgm.addEventListener('play',()=>{ bgmBtn.textContent='❚❚'; bgmBtn.classList.add('playing'); });
-bgm.addEventListener('pause',()=>{ bgmBtn.textContent='♪'; bgmBtn.classList.remove('playing'); });
-document.body.addEventListener('touchstart',function once(){ bgm.play().catch(()=>{}); },{once:true});
-document.body.addEventListener('click',function once2(){ if(bgm.paused){ bgm.play().catch(()=>{}); } },{once:true});
 </script>
 </body>
 </html>
