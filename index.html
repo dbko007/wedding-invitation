@@ -262,6 +262,8 @@
 <section class="reveal">
   <div class="label">Calendar</div>
   <div class="title serif">일정 추가</div>
+  <p style="text-align:center;font-size:14px;color:var(--text);margin-bottom:6px;" id="cal-date"></p>
+  <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:18px;" id="cal-venue"></p>
   <div class="cal-btns">
     <a class="btn" id="calAndroid">안드로이드 캘린더</a>
     <a class="btn" id="calApple">Apple 캘린더</a>
@@ -289,17 +291,17 @@
   <p style="text-align:center;font-size:13px;color:var(--muted);margin-bottom:18px;">마음 전하실 곳</p>
   <div class="acc">
     <div class="h">신랑 고동빈</div>
-    <div class="row"><span>국민은행 466402-01-331358</span><span class="copy" data-acc="466402-01-331358">복사</span></div>
+    <div class="row"><span>국민은행 466402-01-331358</span><span class="copy" data-acc="국민 466402-01-331358">복사</span></div>
     <div class="h">신랑 측 아버지 고광훈</div>
-    <div class="row"><span>하나은행 394-910033-31707</span><span class="copy" data-acc="394-910033-31707">복사</span></div>
+    <div class="row"><span>하나은행 394-910033-31707</span><span class="copy" data-acc="하나 394-910033-31707">복사</span></div>
     <div class="h">신랑 측 어머니 김명옥</div>
-    <div class="row"><span>국민은행 799-21-0049-734</span><span class="copy" data-acc="799-21-0049-734">복사</span></div>
+    <div class="row"><span>국민은행 799-21-0049-734</span><span class="copy" data-acc="국민 799-21-0049-734">복사</span></div>
     <div class="h">신부 김수영</div>
-    <div class="row"><span>우리은행 1002-1415-36132</span><span class="copy" data-acc="1002-1415-36132">복사</span></div>
+    <div class="row"><span>우리은행 1002-1415-36132</span><span class="copy" data-acc="우리 1002-1415-36132">복사</span></div>
     <div class="h">신부 측 아버지 김영문</div>
-    <div class="row"><span>국민은행 247902-04-328934</span><span class="copy" data-acc="247902-04-328934">복사</span></div>
+    <div class="row"><span>국민은행 247902-04-328934</span><span class="copy" data-acc="국민 247902-04-328934">복사</span></div>
     <div class="h">신부 측 어머니 정은옥</div>
-    <div class="row"><span>농협은행 207081-56-151849</span><span class="copy" data-acc="207081-56-151849">복사</span></div>
+    <div class="row"><span>농협은행 207081-56-151849</span><span class="copy" data-acc="농협 207081-56-151849">복사</span></div>
   </div>
 </section>
 
@@ -348,6 +350,11 @@ document.getElementById('info-date').textContent =
 document.getElementById('info-venue').textContent = CONFIG.venueName;
 document.getElementById('info-addr').textContent = CONFIG.venueAddress;
 document.getElementById('info-traffic').textContent = CONFIG.traffic;
+
+// 일정 추가 섹션에도 일시/장소 재표시
+document.getElementById('cal-date').textContent =
+  document.getElementById('info-date').textContent;
+document.getElementById('cal-venue').textContent = CONFIG.venueName;
 
 /* ---------- 카운트다운 ---------- */
 const cdD=document.getElementById('cd-d'),cdH=document.getElementById('cd-h'),
