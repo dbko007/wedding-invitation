@@ -381,7 +381,7 @@ mapEl.innerHTML=`<div style=\"font-size:12px;letter-spacing:.1em;color:var(--gol
 let lbNavFromMap=false;
 const mapImg=mapEl.querySelector('img');
 mapImg.style.cursor='zoom-in';
-mapImg.addEventListener('click',()=>{ lightboxImg.src=mapImg.src; lightbox.classList.add('on'); lbPrev.classList.remove('show'); lbNext.classList.remove('show'); lbNavFromMap=true; });
+mapImg.addEventListener('click',()=>{ lightboxImg.src=mapImg.src; lightbox.classList.add('on'); lbPrev.classList.remove('show'); lbNext.classList.remove('show'); lbPrev.style.visibility='hidden'; lbNext.style.visibility='hidden'; lbNavFromMap=true; });
 
 /* ---------- 캘린더 ---------- */
 const fmtUTC=d=>`${d.getUTCFullYear()}${pad(d.getUTCMonth()+1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;
@@ -441,7 +441,7 @@ galleryImgs.forEach((img,i)=>{
     lbPrev.classList.add('show'); lbNext.classList.add('show');
   });
 });
-lightbox.addEventListener('click',()=>{ lightbox.classList.remove('on'); lbPrev.classList.remove('show'); lbNext.classList.remove('show'); lbNavFromMap=false; });
+lightbox.addEventListener('click',()=>{ lightbox.classList.remove('on'); lbPrev.classList.remove('show'); lbNext.classList.remove('show'); lbPrev.style.visibility=''; lbNext.style.visibility=''; lbNavFromMap=false; });
 lbPrev.addEventListener('click',e=>{ e.stopPropagation(); if(lbNavFromMap){ lbNavFromMap=false; lightboxImg.src=galleryImgs[lbIdx].src; lbPrev.classList.add('show'); lbNext.classList.add('show'); return; } showLb(lbIdx-1); });
 lbNext.addEventListener('click',e=>{ e.stopPropagation(); if(lbNavFromMap){ lbNavFromMap=false; lightboxImg.src=galleryImgs[lbIdx].src; lbPrev.classList.add('show'); lbNext.classList.add('show'); return; } showLb(lbIdx+1); });
 // 스와이프로도 좌우 이동
