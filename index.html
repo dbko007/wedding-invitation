@@ -113,12 +113,7 @@
     max-width:100%; max-height:100%;
     object-fit:contain;
     animation:zoomIn .25s ease;
-    touch-action:none;
-    transform-origin:center center;
-    transition:transform .15s ease-out;
-    will-change:transform;
   }
-  .lightbox img.zooming { transition:none; }
   .lightbox .lb-close {
     position:absolute; top:14px; right:16px; z-index:1001;
     width:40px; height:40px; line-height:40px; text-align:center;
@@ -471,7 +466,7 @@ galleryImgs.forEach((img,i)=>{
 lightbox.addEventListener('click',()=>{ lightbox.classList.remove('on'); lbPrev.classList.remove('show'); lbNext.classList.remove('show'); lbPrev.style.visibility=''; lbNext.style.visibility=''; lbNavFromMap=false; });
 lbPrev.addEventListener('click',e=>{ e.stopPropagation(); if(lbNavFromMap){ lbNavFromMap=false; lightboxImg.src=galleryImgs[lbIdx].src; lbPrev.classList.add('show'); lbNext.classList.add('show'); return; } showLb(lbIdx-1); });
 lbNext.addEventListener('click',e=>{ e.stopPropagation(); if(lbNavFromMap){ lbNavFromMap=false; lightboxImg.src=galleryImgs[lbIdx].src; lbPrev.classList.add('show'); lbNext.classList.add('show'); return; } showLb(lbIdx+1); });
-// 스와이프로도 좌우 이동 (두 손가락 핀치줌 중이 아닐 때만)
+// 스와이프로도 좌우 이동
 let touchX=null;
 lightbox.addEventListener('touchstart',e=>{ if(e.touches.length===1) touchX=e.touches[0].clientX; },{passive:true});
 lightbox.addEventListener('touchend',e=>{
@@ -479,104 +474,6 @@ lightbox.addEventListener('touchend',e=>{
   const dx=e.changedTouches[0].clientX-touchX;
   if(Math.abs(dx)>50) showLb(lbIdx+(dx<0?1:-1));
   touchX=null;
-},{passive:true});
-
-/* ---------- 핀치줌 (두 손가락 확대/축소 + 확대 시 드래그 이동) ---------- */
-let pz={scale:1,tx:0,ty:0};            // 현재 상태
-let pStart=null;                        // 제스처 시작 시점 값
-let pinchD0=0, pinchC0=null;             // 핀치 시작 거리/중심
-let twoFinger=false, panned=false;
-
-function pzApply(){
-  lightboxImg.style.transform=`translate(${pz.tx}px,${pz.ty}px) scale(${pz.scale})`;
-}
-function pzReset(anim){
-  if(anim) lightboxImg.classList.remove('zooming');
-  pz={scale:1,tx:0,ty:0};
-  pzApply();
-  lightbox.style.cursor='zoom-out';
-}
-// 이미지 바뀔 때(이전/다음) 초기화
-const _origShowLb=showLb;
-showLb=function(i){ pzReset(false); _origShowLb(i); };
-
-lightbox.addEventListener('touchstart',e=>{
-  if(e.touches.length===2){
-    twoFinger=true; panned=false; touchX=null;
-    pStart={...pz};
-    const [a,b]=e.touches;
-    pinchD0=Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
-    pinchC0={x:(a.clientX+b.clientX)/2, y:(a.clientY+b.clientY)/2};
-    lightboxImg.classList.add('zooming'); // 제스처 중 트랜지션 끔
-  } else if(e.touches.length===1 && pz.scale>1){
-    pStart={...pz}; pinchC0={x:e.touches[0].clientX, y:e.touches[0].clientY};
-    lightboxImg.classList.add('zooming');
-  }
-},{passive:true});
-
-lightbox.addEventListener('touchmove',e=>{
-  if(!pStart) return;
-  if(e.touches.length===2){
-    e.preventDefault();
-    const [a,b]=e.touches;
-    const d=Math.hypot(a.clientX-b.clientX, a.clientY-b.clientY);
-    const c={x:(a.clientX+b.clientX)/2, y:(a.clientY+b.clientY)/2};
-    // 중심 이동량은 이동(pan)에 반영
-    let ns=pStart.scale*(d/pinchD0);
-    ns=Math.max(1, Math.min(4, ns));
-    pz.scale=ns;
-    if(ns>1){
-      pz.tx=pStart.tx+(c.x-pinchC0.x);
-      pz.ty=pStart.ty+(c.y-pinchC0.y);
-    } else {
-      // 축소로 1배가 되면 위치 초기화
-      pz.tx=0; pz.ty=0;
-    }
-    pzApply();
-  } else if(e.touches.length===1 && pz.scale>1){
-    e.preventDefault();
-    panned=true;
-    pz.tx=pStart.tx+(e.touches[0].clientX-pinchC0.x);
-    pz.ty=pStart.ty+(e.touches[0].clientY-pinchC0.y);
-    pzApply();
-  }
-},{passive:false});
-
-lightbox.addEventListener('touchend',e=>{
-  if(twoFinger && e.touches.length===0){
-    twoFinger=false;
-    lightboxImg.classList.remove('zooming');
-    if(pz.scale<=1.02){ pzReset(true); }   // 거의 1배면 스냅 백
-    touchX=null;
-  }
-  if(pz.scale>1 && e.touches.length===0){
-    lightboxImg.classList.remove('zooming');
-    pStart=null; panned=true;
-    lightbox.style.cursor='';
-  }
-},{passive:true});
-
-// 라이트박스 닫을 때 확대 상태 초기화
-const _origClose=lightbox.onclick;
-lightbox.addEventListener('click',()=>{ pzReset(false); });
-// 닫기 버튼(✕)
-document.querySelector('.lb-close').addEventListener('click',e=>{
-  e.stopPropagation();
-  pzReset(false);
-  lightbox.classList.remove('on');
-  lbPrev.classList.remove('show'); lbNext.classList.remove('show');
-  lbPrev.style.visibility=''; lbNext.style.visibility='';
-  lbNavFromMap=false;
-});
-// 더블탭 확대/축소
-let lastTap=0;
-lightbox.addEventListener('touchend',e=>{
-  if(twoFinger||panned||e.changedTouches.length>1) { panned=false; return; }
-  const now=Date.now();
-  if(now-lastTap<300){
-    if(pz.scale>1){ pzReset(true); } else { pz.scale=2; pzApply(); lightbox.style.cursor=''; }
-    lastTap=0;
-  } else lastTap=now;
 },{passive:true});
 </script>
 </body>
